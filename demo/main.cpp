@@ -35,6 +35,9 @@ constexpr char const* const pPositionAttribName = "position";
 constexpr char const* const pColourAttribName = "colour";
 
 
+using sdl_window_ptr = std::unique_ptr<SDL_Window, demo::WindowDeleter>;
+
+
 bool handleKeydown(SDL_KeyboardEvent const& event)
 {
 	switch (event.keysym.sym)
@@ -64,7 +67,7 @@ void logBodies(BodiesContainer const& bodies)
 }
 
 
-void run(int argc, char const* const argv[])
+sdl_window_ptr initSDL()
 {
 	// Initialise SDL with video and events.
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0)
@@ -73,9 +76,8 @@ void run(int argc, char const* const argv[])
 	}
 	atexit(SDL_Quit);
 
-
 	// Initialise the window.
-	auto const pWindow = std::unique_ptr<SDL_Window, demo::WindowDeleter>{
+	sdl_window_ptr pWindow{
 		SDL_CreateWindow(
 			"Debug draw demo",
 			SDL_WINDOWPOS_UNDEFINED,
@@ -90,6 +92,13 @@ void run(int argc, char const* const argv[])
 		throw std::runtime_error{"SDL_CreateWindow failed"};
 	}
 
+	return pWindow;
+}
+
+
+void run(int argc, char const* const argv[])
+{
+	auto pWindow{initSDL()};
 
 	// Set OpenGL version to 3.1, and use Core profile.
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
