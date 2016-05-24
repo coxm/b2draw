@@ -83,7 +83,13 @@ public:
 		b2Color const& colour
 	) override;
 
-	virtual void DrawTransform(b2Transform const& xf);
+	virtual void DrawPoint(
+		b2Vec2 const& point,
+		float32 size,
+		b2Color const& colour
+	) override;
+
+	virtual void DrawTransform(b2Transform const& xf) override;
 
 	void BufferData();
 

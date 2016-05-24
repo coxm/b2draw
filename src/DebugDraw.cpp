@@ -117,6 +117,25 @@ DebugDraw::DrawSegment(
 	m_lineRenderer.addSegment(begin, end, colour);
 }
 
+
+void
+DebugDraw::DrawPoint(
+	b2Vec2 const& point,
+	float32 size,
+	b2Color const& colour
+)
+{
+	constexpr int32 numVertices{4};
+	b2Vec2 const vertices[numVertices] = {
+		b2Vec2{point.x - 0.1f, point.y - 0.1f},
+		b2Vec2{point.x + 0.1f, point.y - 0.1f},
+		b2Vec2{point.x + 0.1f, point.y + 0.1f},
+		b2Vec2{point.x - 0.1f, point.y + 0.1f}
+	};
+	DrawSolidPolygon(&vertices[0], numVertices, colour);
+}
+
+
 void
 DebugDraw::DrawTransform(b2Transform const& xf)
 {

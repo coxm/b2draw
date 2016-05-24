@@ -60,8 +60,19 @@ include_directories (
 	${LOGGING_INCLUDE_DIR}
 )
 
-find_library (LIB_BOX2D Box2D PATHS "${BOX2D_LIBRARY_DIR}")
 find_library (LIB_OGL ogl PATHS "${OGL_LIBRARY_DIR}")
+find_package (OpenGL REQUIRED)
+find_library (LIB_BOX2D Box2D PATHS "${BOX2D_LIBRARY_DIR}")
+find_package (GLEW REQUIRED)
+
+set (
+	DEPENDENCY_LIBRARIES
+	${OPENGL_LIBRARIES}
+	${GLEW_LIBRARIES}
+	${LIB_BOX2D}
+	${LIB_OGL}
+)
+
 
 # Enforce dependency requirements.
 include (dependencies/enforce.cmake)
@@ -70,5 +81,8 @@ include (dependencies/enforce.cmake)
 #---- Targets ----#
 add_library (${PROJECT_LIB} SHARED ${CPP_SOURCES})
 set_target_properties (${PROJECT_LIB} PROPERTIES SOVERSION ${PROJECT_VERSION})
-target_link_libraries (${PROJECT_LIB} ${LIB_BOX2D} ${LIB_OGL})
+target_link_libraries (${PROJECT_LIB} ${DEPENDENCY_LIBRARIES})
 install (TARGETS ${PROJECT_LIB} LIBRARY DESTINATION lib)
+
+
+add_subdirectory (demo)
