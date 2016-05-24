@@ -37,6 +37,8 @@ constexpr char const* const pColourAttribName = "colour";
 
 using sdl_window_ptr = std::unique_ptr<SDL_Window, demo::WindowDeleter>;
 
+using gl_context_ptr = std::unique_ptr<void, demo::GLContextDeleter>;
+
 
 bool handleKeydown(SDL_KeyboardEvent const& event)
 {
@@ -67,6 +69,11 @@ void logBodies(BodiesContainer const& bodies)
 }
 
 
+/**
+ * Initialise SDL and the window.
+ *
+ * @returns a unique_ptr to the window.
+ */
 sdl_window_ptr initSDL()
 {
 	// Initialise SDL with video and events.
@@ -96,10 +103,13 @@ sdl_window_ptr initSDL()
 }
 
 
-void run(int argc, char const* const argv[])
+/**
+ * Initialise OpenGL and GLEW.
+ *
+ * @returns a unique_ptr to the GL context.
+ */
+gl_context_ptr initGL(SDL_Window* pWindow)
 {
-	auto pWindow{initSDL()};
-
 	// Set OpenGL version to 3.1, and use Core profile.
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
@@ -110,14 +120,11 @@ void run(int argc, char const* const argv[])
 
 
 	// Initialise the OpenGL context.
-	auto const pGLContext = std::unique_ptr<void, demo::GLContextDeleter>(
-		SDL_GL_CreateContext(pWindow.get())
-	);
+	gl_context_ptr pGLContext{SDL_GL_CreateContext(pWindow)};
 	if (not pGLContext)
 	{
 		throw std::runtime_error{"SDL_GL_CreateContext failed"};
 	}
-
 
 	// Initialise GLEW.
 	glewExperimental = GL_TRUE;
@@ -131,7 +138,6 @@ void run(int argc, char const* const argv[])
 		}
 	}
 
-
 	// Try to set VSync; failure is OK here.
 	if (SDL_GL_SetSwapInterval(1) < 0)
 	{
@@ -139,7 +145,17 @@ void run(int argc, char const* const argv[])
 			<< std::endl;
 	}
 
+	return pGLContext;
+}
 
+
+/**
+ * Create a GL program and add compiled shaders.
+ *
+ * @returns the ID of the created program.
+ */
+GLuint const createProgram()
+{
 	// Create OpenGL shaders and program.
 	GLuint const vertShaderID{demo::compileShader(GL_VERTEX_SHADER, R"GLS(\
 #version 330 core
@@ -184,6 +200,15 @@ void main() {
 		}
 	}
 
+	return programID;
+}
+
+
+void run(int argc, char const* const argv[])
+{
+	auto pWindow{initSDL()};
+	auto pGLContext{initGL(pWindow.get())};
+	auto programID{createProgram()};
 
 	// Set up scene for rendering.
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -274,7 +299,6 @@ void main() {
 		debugDraw.Render();
 		SDL_GL_SwapWindow(pSDLWindow);
 	};
-
 
 	// Ensure no GL errors.
 	{
