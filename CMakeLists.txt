@@ -61,8 +61,8 @@ include_directories (
 )
 
 find_library (LIB_OGL ogl PATHS "${OGL_LIBRARY_DIR}")
-find_package (OpenGL REQUIRED)
 find_library (LIB_BOX2D Box2D PATHS "${BOX2D_LIBRARY_DIR}")
+find_package (OpenGL REQUIRED)
 find_package (GLEW REQUIRED)
 
 set (

@@ -5,6 +5,13 @@
 #include "b2draw/algorithm.h"
 #include "b2draw/DebugDraw.h"
 
+
+#ifdef B2DRAW_MULTITHREADING
+#	define LOCK_MUTEX(mut) std::lock_guard<std::mutex> lock{mut}
+#else
+#	define LOCK_MUTEX(mut) ((void) 0)
+#endif
+
 namespace b2draw {
 
 
@@ -22,7 +29,9 @@ DebugDraw::DebugDraw(
 	,	m_fillRenderer{
 			programId, pVertexAttrib, pColourAttrib, numCircleSegments
 		}
+#ifdef B2DRAW_MULTITHREADING
 	,	m_mutex{}
+#endif
 	,	m_fillAlpha{fillAlpha}
 	,	m_axisScale{axisScale}
 {
@@ -31,6 +40,7 @@ DebugDraw::DebugDraw(
 
 DebugDraw::~DebugDraw()
 {
+	LOCK_MUTEX(m_mutex);
 }
 
 
@@ -41,7 +51,7 @@ DebugDraw::DrawPolygon(
 	b2Color const& colour
 )
 {
-	std::lock_guard<std::mutex> lock{m_mutex};
+	LOCK_MUTEX(m_mutex);
 	m_lineRenderer.addPolygon(pVertices, vertexCount, colour);
 }
 
@@ -55,7 +65,7 @@ DebugDraw::DrawSolidPolygon(
 	b2Color fillColour{colour};
 	fillColour.a = m_fillAlpha;
 
-	std::lock_guard<std::mutex> lock{m_mutex};
+	LOCK_MUTEX(m_mutex);
 	m_fillRenderer.addPolygon(pVertices, vertexCount, fillColour);
 	m_lineRenderer.addPolygon(pVertices, vertexCount, fillColour);
 }
@@ -67,7 +77,7 @@ DebugDraw::DrawCircle(
 	b2Color const& colour
 )
 {
-	std::lock_guard<std::mutex> lock{m_mutex};
+	LOCK_MUTEX(m_mutex);
 	m_lineRenderer.addCircle(centre, radius, colour);
 }
 
@@ -95,7 +105,7 @@ DebugDraw::DrawSolidCircle(
 		numSegments
 	);
 
-	std::lock_guard<std::mutex> lock{m_mutex};
+	LOCK_MUTEX(m_mutex);
 	m_fillRenderer.addPolygon(segmentVertices.data(), numSegments, fillColour);
 
 	m_lineRenderer.addPolygon(segmentVertices.data(), numSegments, colour);
@@ -113,7 +123,7 @@ DebugDraw::DrawSegment(
 	b2Color const& colour
 )
 {
-	std::lock_guard<std::mutex> lock{m_mutex};
+	LOCK_MUTEX(m_mutex);
 	m_lineRenderer.addSegment(begin, end, colour);
 }
 
@@ -139,7 +149,7 @@ DebugDraw::DrawPoint(
 void
 DebugDraw::DrawTransform(b2Transform const& xf)
 {
-	std::lock_guard<std::mutex> lock{m_mutex};
+	LOCK_MUTEX(m_mutex);
 
 	b2Vec2 end = xf.p + m_axisScale * xf.q.GetXAxis();
 	m_lineRenderer.addSegment(xf.p, end, b2Color{1.0f, 0.0f, 0.0f});
@@ -152,7 +162,7 @@ DebugDraw::DrawTransform(b2Transform const& xf)
 void
 DebugDraw::BufferData()
 {
-	std::lock_guard<std::mutex> lock{m_mutex};
+	LOCK_MUTEX(m_mutex);
 	m_lineRenderer.bufferData();
 	m_fillRenderer.bufferData();
 }
@@ -161,7 +171,7 @@ DebugDraw::BufferData()
 void
 DebugDraw::Render()
 {
-	std::lock_guard<std::mutex> lock{m_mutex};
+	LOCK_MUTEX(m_mutex);
 	m_lineRenderer.render(GL_LINE_LOOP);
 	m_fillRenderer.render(GL_TRIANGLE_FAN);
 }
@@ -170,10 +180,13 @@ DebugDraw::Render()
 void
 DebugDraw::Clear()
 {
-	std::lock_guard<std::mutex> lock{m_mutex};
+	LOCK_MUTEX(m_mutex);
 	m_lineRenderer.clear();
 	m_fillRenderer.clear();
 }
 
 
 } // namespace b2draw
+
+
+#undef LOCK_MUTEX

@@ -1,7 +1,9 @@
 #ifndef HEADER_INCLUDE__RECURSION__PHYSICS__B2__DEBUGDRAW__H
 #define HEADER_INCLUDE__RECURSION__PHYSICS__B2__DEBUGDRAW__H
 #include <vector>
+#ifdef B2DRAW_MULTITHREADING
 #include <mutex>
+#endif // #ifndef B2DRAW_MULTITHREADING
 
 #include <Box2D/Common/b2Draw.h>
 
@@ -101,7 +103,9 @@ private:
 	PrimitiveRenderer m_lineRenderer;
 	PrimitiveRenderer m_fillRenderer;
 
+#ifdef B2DRAW_MULTITHREADING
 	std::mutex m_mutex;
+#endif
 
 	float32 m_fillAlpha;
 	float32 m_axisScale;
