@@ -6,11 +6,6 @@ if (NOT LIB_BOX2D)
 endif ()
 
 
-if (NOT DEFINED MACROS_INCLUDE_DIR)
-	message (STATUS "Note: MACROS_INCLUDE_DIR is not defined")
-endif ()
-
-
 if (NOT DEFINED LOGGING_INCLUDE_DIR)
 	message (STATUS "Note: LOGGING_INCLUDE_DIR is not defined")
 endif ()

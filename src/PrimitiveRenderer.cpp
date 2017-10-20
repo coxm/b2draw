@@ -6,8 +6,6 @@
 #include <iterator>
 #include <stdexcept>
 
-#include <macros/cplurge_assert.h>
-
 #include <logging/cplurge_log.h>
 
 #include <ogl/util.h>
@@ -111,7 +109,7 @@ PrimitiveRenderer::addPolygon(
 	b2Color const& colour
 )
 {
-	CPLURGE_ASSERT(numNewVertices != 0, "Adding a polygon with no vertices!");
+	assert(numNewVertices != 0 && "Can't render an empty polygon!");
 	// Reserve the space before we do anything.
 	auto const totalVertices = m_vertexCount + numNewVertices;
 	m_verts.reserve(totalVertices);
@@ -139,10 +137,10 @@ PrimitiveRenderer::addPolygon(
 	m_vertexCount = totalVertices;
 	m_polygonCount = newPolygonCount;
 
-	CPLURGE_ASSERT(
-		m_polygonCount == m_firstIndices.size() and
-		m_polygonCount == m_polygonSizes.size(),
-		"PrimitiveRenderer internally inconsistent"
+	assert(
+		m_polygonCount == m_firstIndices.size() &&
+		m_polygonCount == m_polygonSizes.size() &&
+		"PrimitiveRenderer consistency error"
 	);
 }
 
@@ -166,8 +164,8 @@ PrimitiveRenderer::addCircle(
 		m_numCircleSegments
 	);
 
-	CPLURGE_ASSERT(
-		vertices.size() == m_numCircleSegments,
+	assert(
+		vertices.size() == m_numCircleSegments &&
 		"Wrong number of circle segments"
 	);
 
@@ -198,11 +196,11 @@ PrimitiveRenderer::addSegment(
 
 	m_vertexCount = vertexCount;
 	m_polygonCount = polygonCount;
-	CPLURGE_ASSERT(
-		m_polygonCount == m_polygonSizes.size() and
-		m_polygonCount == m_firstIndices.size() and
-		m_vertexCount == m_verts.size() and
-		m_vertexCount == m_vertexColours.size(),
+	assert(
+		m_polygonCount == m_polygonSizes.size() &&
+		m_polygonCount == m_firstIndices.size() &&
+		m_vertexCount == m_verts.size() &&
+		m_vertexCount == m_vertexColours.size() &&
 		"PrimitiveRenderer internally inconsistent"
 	);
 }

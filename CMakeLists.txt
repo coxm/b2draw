@@ -55,7 +55,6 @@ include_directories (
 	SYSTEM
 	${BOX2D_INCLUDE_DIR}
 	${OGL_INCLUDE_DIR}
-	${MACROS_INCLUDE_DIR}
 	${LOGGING_INCLUDE_DIR}
 )
 

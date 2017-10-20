@@ -6,8 +6,6 @@
 
 #include <Box2D/Common/b2Draw.h> // For b2Color.
 
-#include <macros/class_macros.h>
-
 
 namespace b2draw {
 
@@ -22,7 +20,10 @@ public:
 		uint16 const numCircleSegments = 16
 	);
 
-	CPLURGE_NON_COPYABLE(PrimitiveRenderer)
+	// PrimitiveRenderer is non-copyable.
+	PrimitiveRenderer(PrimitiveRenderer const&) = delete;
+	PrimitiveRenderer& operator=(PrimitiveRenderer const&) = delete;
+
 	PrimitiveRenderer(PrimitiveRenderer&&) noexcept;
 	PrimitiveRenderer& operator=(PrimitiveRenderer&&) noexcept;
 

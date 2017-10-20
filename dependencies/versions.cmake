@@ -1,4 +1,3 @@
 set (BOX2D_VERSION "2")
-set (MACROS_VERSION "0")
 set (OGL_VERSION "1")
 set (LOGGING_VERSION "0")
