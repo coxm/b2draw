@@ -7,8 +7,6 @@
 
 #include <Box2D/Common/b2Draw.h>
 
-#include <macros/class_macros.h>
-
 #include "b2draw/PrimitiveRenderer.h"
 
 namespace b2draw {
@@ -47,10 +45,18 @@ public:
 		float32 const axisScale = 4.0f
 	);
 
-	CPLURGE_NON_COPYABLE(DebugDraw);
+	DebugDraw(DebugDraw const&) = delete;
+	DebugDraw& operator=(DebugDraw const&) = delete;
 
-	DebugDraw(DebugDraw&& rvOther);
-	DebugDraw& operator=(DebugDraw&& rvOther);
+#ifdef B2DRAW_MULTITHREADING // Can't move the mutex if multithreading.
+	DebugDraw(DebugDraw&&) = delete;
+	DebugDraw& operator=(DebugDraw&&) = delete;
+
+#else // ifdef B2DRAW_MULTITHREADING
+	DebugDraw(DebugDraw&&) = default;
+	DebugDraw& operator=(DebugDraw&&) = default;
+
+#endif // ifdef B2DRAW_MULTITHREADING else
 
 	virtual ~DebugDraw() noexcept override;
 
