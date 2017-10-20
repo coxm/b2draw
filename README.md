@@ -42,3 +42,12 @@ unusual:
         -DBOX2D_LIBRARY_DIR=/box2d/library/dir/ \
         -DGLM_INCLUDE_DIR=/path/to/glm/ \
         ..
+
+
+## Demo
+To run the demo, build as above but ensure to provide the GLM location and that
+SDL2 can be found on your system. Then run `$BUILD_DIR/demo/demo` where
+`BUILD_DIR` is the path to your build directory.
+
+Once the demo is running, you'll have to hit 's' (for "step") to step and
+render the simulation.
