@@ -51,13 +51,8 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CXX_FLAGS}")
 file (GLOB CPP_SOURCES "${PROJECT_SOURCE_DIR}/*.cpp")
 
 include_directories ("${CONFIG_HEADERS_DIR}" "${PROJECT_INCLUDE_DIR}")
-include_directories (
-	SYSTEM
-	${BOX2D_INCLUDE_DIR}
-	${OGL_INCLUDE_DIR}
-)
+include_directories (SYSTEM ${BOX2D_INCLUDE_DIR})
 
-find_library (LIB_OGL ogl PATHS "${OGL_LIBRARY_DIR}")
 find_library (LIB_BOX2D Box2D PATHS "${BOX2D_LIBRARY_DIR}")
 find_package (OpenGL REQUIRED)
 find_package (GLEW REQUIRED)
@@ -67,7 +62,6 @@ set (
 	${OPENGL_LIBRARIES}
 	${GLEW_LIBRARIES}
 	${LIB_BOX2D}
-	${LIB_OGL}
 )
 
 

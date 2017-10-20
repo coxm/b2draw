@@ -1,2 +1,1 @@
 set (BOX2D_VERSION "2")
-set (OGL_VERSION "1")

@@ -6,11 +6,8 @@
 #include <iterator>
 #include <stdexcept>
 
-#include <ogl/util.h>
-
 #include "b2draw/algorithm.h"
 #include "b2draw/PrimitiveRenderer.h"
-#include "b2draw/traits.h"
 
 namespace b2draw {
 
@@ -214,7 +211,8 @@ PrimitiveRenderer::bufferData()
 
 	// Vertices.
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbos[s_vertexBufferIndex]);
-	ogl::vertexAttribPointer<vertex_type>(m_vertexAttribLocation);
+	glVertexAttribPointer(
+		m_vertexAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 	glBufferData(
 		GL_ARRAY_BUFFER,
 		m_vertexCount * sizeof(vertex_type),
@@ -223,7 +221,8 @@ PrimitiveRenderer::bufferData()
 	);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbos[s_colourBufferIndex]);
-	ogl::vertexAttribPointer<colour_type>(m_colourAttribLocation);
+	glVertexAttribPointer(
+		m_colourAttribLocation, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
 	glBufferData(
 		GL_ARRAY_BUFFER,
 		m_vertexCount * sizeof(colour_type),
