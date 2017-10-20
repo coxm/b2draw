@@ -6,8 +6,6 @@
 #include <iterator>
 #include <stdexcept>
 
-#include <logging/cplurge_log.h>
-
 #include <ogl/util.h>
 
 #include "b2draw/algorithm.h"
