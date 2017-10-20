@@ -1,1 +1,0 @@
-set (BOX2D_VERSION "2")

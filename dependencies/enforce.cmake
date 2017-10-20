@@ -1,6 +1,0 @@
-if (NOT DEFINED BOX2D_INCLUDE_DIR)
-	message (STATUS "Note: BOX2D_INCLUDE_DIR is not defined")
-endif ()
-if (NOT LIB_BOX2D)
-	message (FATAL_ERROR "No libBox2D in ${BOX2D_LIBRARY_DIR}")
-endif ()
