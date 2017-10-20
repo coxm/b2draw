@@ -9,7 +9,7 @@ project(${PROJECT_NAME} LANGUAGES CXX VERSION 1.0.0)
 
 # Compiler flags.
 list(APPEND CXX_FLAGS_BASE
-	-Werror -std=c++1z -Wall -Weffc++ -Wold-style-cast -Woverloaded-virtual
+	-Werror -std=c++1z -Wall -Wold-style-cast -Woverloaded-virtual
 	-Wno-int-conversions -Wsign-promo -Wno-pmf-conversions
 )
 if(${CMAKE_COMPILER_IS_GNUCXX})
