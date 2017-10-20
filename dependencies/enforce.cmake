@@ -11,11 +11,6 @@ if (NOT DEFINED MACROS_INCLUDE_DIR)
 endif ()
 
 
-if (NOT DEFINED BITHACKS_INCLUDE_DIR)
-	message (STATUS "Note: BITHACKS_INCLUDE_DIR is not defined")
-endif ()
-
-
 if (NOT DEFINED LOGGING_INCLUDE_DIR)
 	message (STATUS "Note: LOGGING_INCLUDE_DIR is not defined")
 endif ()

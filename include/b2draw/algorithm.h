@@ -2,8 +2,6 @@
 #define HEADER_INCLUDE__RECURSION__ALGORITHM__CHEBYSHEV_SEGMENTS__H
 #include <cmath>
 
-#include <bithacks/bithacks.h>
-
 
 namespace b2draw {
 namespace algorithm {
@@ -23,9 +21,8 @@ constexpr float TWO_PI = 2 * M_PI;
 constexpr float
 cosToSin(float const angle, float const cosAngle)
 {
-	return std::sqrt(1 - cosAngle * cosAngle) * bithacks::negativeIf(
-		std::remainder(angle, TWO_PI) < 0
-	);
+	bool const cond = std::remainder(angle, TWO_PI) < 0;
+	return std::sqrt(1 - cosAngle * cosAngle) * (!cond - cond);
 }
 
 
@@ -39,9 +36,8 @@ cosToSin(float const angle, float const cosAngle)
 constexpr float
 sinToCos(float const angle, float const sinAngle)
 {
-	return std::sqrt(1 - sinAngle * sinAngle) * bithacks::negativeIf(
-		std::remainder(angle + HALF_PI, TWO_PI) < 0
-	);
+	bool const cond = std::remainder(angle + HALF_PI, TWO_PI) < 0;
+	return std::sqrt(1 - sinAngle * sinAngle) * (!cond - cond);
 }
 
 
