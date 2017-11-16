@@ -294,7 +294,6 @@ void run(int argc, char const* const argv[])
 		pMvpMatStart
 	] {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		glUniformMatrix4fv(mvpAttribLoc, 1, GL_FALSE, pMvpMatStart);
 		debugDraw.Render();
 		SDL_GL_SwapWindow(pSDLWindow);
@@ -316,6 +315,7 @@ void run(int argc, char const* const argv[])
 	}
 
 	update();
+	render();
 	render();
 
 	SDL_Event event;
