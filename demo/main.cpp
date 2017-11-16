@@ -1,6 +1,5 @@
 #include <memory>
 #include <iostream>
-#include <vector>
 
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
@@ -56,10 +55,13 @@ bool handleKeydown(SDL_KeyboardEvent const& event)
 }
 
 
-template <typename BodiesContainer>
-void logBodies(BodiesContainer const& bodies)
+void logBodies(b2World const* pWorld)
 {
-	for (auto* const pBody: bodies)
+	for (
+		b2Body const* pBody = pWorld->GetBodyList();
+		pBody != nullptr;
+		pBody = pBody->GetNext()
+	)
 	{
 		auto const pos = pBody->GetPosition();
 		float32 const angle = pBody->GetAngle();
@@ -223,13 +225,11 @@ void run(int argc, char const* const argv[])
 	b2World world{gravity};
 	world.SetDebugDraw(&debugDraw);
 
-	std::vector<b2Body*> bodies;
 	{
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_staticBody;
 		bodyDef.position.Set(0.0f, -4.0f);
 		auto const pGroundBody = world.CreateBody(&bodyDef);
-		bodies.push_back(pGroundBody);
 
 		b2PolygonShape box;
 		box.SetAsBox(-30.0f, 1.0f);
@@ -241,7 +241,6 @@ void run(int argc, char const* const argv[])
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position.Set(0.0f, 4.0f);
 		auto const pDynamicBody = world.CreateBody(&bodyDef);
-		bodies.push_back(pDynamicBody);
 
 		b2PolygonShape box;
 		box.SetAsBox(1.0f, 1.0f);
@@ -342,7 +341,7 @@ void run(int argc, char const* const argv[])
 							std::cout << "Step" << std::endl;
 							update();
 							render();
-							logBodies(bodies);
+							logBodies(&world);
 							break;
 
 						default:
