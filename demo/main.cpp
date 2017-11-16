@@ -39,22 +39,6 @@ using sdl_window_ptr = std::unique_ptr<SDL_Window, demo::WindowDeleter>;
 using gl_context_ptr = std::unique_ptr<void, demo::GLContextDeleter>;
 
 
-bool handleKeydown(SDL_KeyboardEvent const& event)
-{
-	switch (event.keysym.sym)
-	{
-		case SDLK_ESCAPE:
-			return true;
-
-		case SDLK_s:
-			std::cout << "Step" << std::endl;
-			break;
-	}
-
-	return false;
-}
-
-
 void logBodies(b2World const* pWorld)
 {
 	for (
