@@ -45,8 +45,8 @@ unusual:
 
 
 ## Demo
-To run the demo, build as above but ensure to provide the GLM location and that
-SDL2 can be found on your system. Then run `$BUILD_DIR/demo/demo` where
+To run the demo, build as above but ensure to define `BUILD_DEMO`, and that GLM
+and SDL2 can be found. Once built, run `$BUILD_DIR/demo/demo`, where
 `BUILD_DIR` is the path to your build directory.
 
 Once the demo is running, you'll have to hit 's' (for "step") to step and

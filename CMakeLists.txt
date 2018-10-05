@@ -7,6 +7,9 @@ set(PROJECT_NAME b2draw)
 project(${PROJECT_NAME} LANGUAGES CXX VERSION 2.0.0)
 
 
+option(BUILD_DEMO OFF "Whether to build the demo application")
+
+
 # Compiler flags.
 list(APPEND CXX_FLAGS_BASE
 	-Werror -std=c++1z -Wall -Wold-style-cast -Woverloaded-virtual

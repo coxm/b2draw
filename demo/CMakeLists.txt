@@ -1,5 +1,6 @@
-if(GLM_INCLUDE_DIR)
-	include_directories(SYSTEM "${GLM_INCLUDE_DIR}")
+if(BUILD_DEMO)
+	message(STATUS "Building demo...")
+
 	find_library(LIB_SDL SDL2)
 	if(LIB_SDL)
 		file(
@@ -19,6 +20,4 @@ if(GLM_INCLUDE_DIR)
 	else()
 		message(STATUS "Unable to find libSDL2. Not building demo.")
 	endif()
-else()
-	message(STATUS "No GLM_INCLUDE_DIR defined. Not building demo.")
 endif()
