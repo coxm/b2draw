@@ -20,7 +20,7 @@ Additionally, to build and run the demo, you'll need
 
 ### Configure CMake
 Configure as usual, defining any dependency locations if required (use the form
-`<LIBRARY_NAME>_INCLUDE_DIR` for headers and `<LIBRARY_NAME>_LIBRARY_DIR` for
+`<LIBRARY_NAME>_INCLUDE_DIRS` for headers and `<LIBRARY_NAME>_LIB_DIR` for
 libraries.
 
 #### Simple example
@@ -38,9 +38,9 @@ unusual:
     mkdir build && cd build
     cmake \
         -DCMAKE_BUILD_TYPE=Debug \
-        -DBOX2D_INCLUDE_DIR=/box2d/include/dir/ \
-        -DBOX2D_LIBRARY_DIR=/box2d/library/dir/ \
-        -DGLM_INCLUDE_DIR=/path/to/glm/ \
+        -DBOX2D_INCLUDE_DIRS=/box2d/include/dir/ \
+        -DBOX2D_LIB_DIR=/box2d/library/dir/ \
+        -DGLM_INCLUDE_DIRS=/path/to/glm/ \
         ..
 
 

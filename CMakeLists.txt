@@ -29,13 +29,13 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 
 
 # Dependencies.
-if(BOX2D_INCLUDE_DIR)
-	include_directories(SYSTEM ${BOX2D_INCLUDE_DIR})
+if(BOX2D_INCLUDE_DIRS)
+  include_directories(SYSTEM ${BOX2D_INCLUDE_DIRS})
 endif()
-if(GLM_INCLUDE_DIR)
-	include_directories(SYSTEM ${GLM_INCLUDE_DIR})
+if(GLM_INCLUDE_DIRS)
+	include_directories(SYSTEM ${GLM_INCLUDE_DIRS})
 endif()
-find_library(LIB_BOX2D Box2D PATHS "${BOX2D_LIBRARY_DIR}")
+find_library(LIB_BOX2D Box2D PATHS "${BOX2D_LIB_DIR}")
 find_package(OpenGL REQUIRED)
 find_package(GLEW 2.0 EXACT REQUIRED)
 set(DEPENDENCY_LIBRARIES ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${LIB_BOX2D})
