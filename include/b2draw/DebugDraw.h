@@ -1,9 +1,6 @@
 #ifndef HEADER_INCLUDE__RECURSION__PHYSICS__B2__DEBUGDRAW__H
 #define HEADER_INCLUDE__RECURSION__PHYSICS__B2__DEBUGDRAW__H
 #include <vector>
-#ifdef B2DRAW_MULTITHREADING
-#include <mutex>
-#endif // #ifndef B2DRAW_MULTITHREADING
 
 #include <Box2D/Common/b2Draw.h>
 
@@ -48,15 +45,8 @@ public:
 	DebugDraw(DebugDraw const&) = delete;
 	DebugDraw& operator=(DebugDraw const&) = delete;
 
-#ifdef B2DRAW_MULTITHREADING // Can't move the mutex if multithreading.
-	DebugDraw(DebugDraw&&) = delete;
-	DebugDraw& operator=(DebugDraw&&) = delete;
-
-#else // ifdef B2DRAW_MULTITHREADING
 	DebugDraw(DebugDraw&&) = default;
 	DebugDraw& operator=(DebugDraw&&) = default;
-
-#endif // ifdef B2DRAW_MULTITHREADING else
 
 	virtual ~DebugDraw() noexcept override;
 
@@ -108,10 +98,6 @@ public:
 private:
 	PrimitiveRenderer m_lineRenderer;
 	PrimitiveRenderer m_fillRenderer;
-
-#ifdef B2DRAW_MULTITHREADING
-	std::mutex m_mutex;
-#endif
 
 	float32 m_fillAlpha;
 	float32 m_axisScale;
