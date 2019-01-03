@@ -298,10 +298,6 @@ void run(int argc, char const* const argv[])
 		}
 	}
 
-	update();
-	render();
-	render();
-
 	SDL_Event event;
 	bool userQuit{false};
 
@@ -322,13 +318,6 @@ void run(int argc, char const* const argv[])
 							userQuit = true;
 							break;
 
-						case SDLK_s:
-							std::cout << "Step" << std::endl;
-							update();
-							render();
-							logBodies(&world);
-							break;
-
 						default:
 							break;
 					}
@@ -338,6 +327,9 @@ void run(int argc, char const* const argv[])
 					break;
 			}
 		}
+
+		update();
+		render();
 	}
 }
 
