@@ -21,7 +21,7 @@ public:
 		GLuint const programId,
 		char const* const pVertexAttrib,
 		char const* const pColourAttrib,
-		uint16 const numCircleSegments = 16
+		unsigned const numCircleSegments = 16u
 	);
 
 	// PrimitiveRenderer is non-copyable.
@@ -65,7 +65,9 @@ public:
 	 */
 	void clear();
 
-	inline uint16 const numCircleSegments() const noexcept;
+	inline unsigned const numCircleSegments() const noexcept
+	{ return m_numCircleSegments; }
+
 	inline uint16 const vertexCount() const noexcept;
 	inline uint16 const polygonCount() const noexcept;
 
@@ -85,15 +87,10 @@ private:
 	GLint m_vertexAttribLocation;
 	GLint m_colourAttribLocation;
 
-	uint16 m_numCircleSegments;
+	unsigned m_numCircleSegments;
 	uint16 m_vertexCount;
 	uint16 m_polygonCount;
 };
-
-
-uint16 const
-PrimitiveRenderer::numCircleSegments() const noexcept
-{ return m_numCircleSegments; }
 
 
 uint16 const

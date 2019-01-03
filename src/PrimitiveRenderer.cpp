@@ -12,7 +12,7 @@ PrimitiveRenderer::PrimitiveRenderer(
 	GLuint const programId,
 	char const* const pVertexAttrib,
 	char const* const pColourAttrib,
-	uint16 const numCircleSegments
+	unsigned const numCircleSegments
 )
 	:	m_vertices{}
 	,	m_firstIndices{}
@@ -22,7 +22,7 @@ PrimitiveRenderer::PrimitiveRenderer(
 	,	m_program{programId}
 	,	m_vertexAttribLocation{glGetAttribLocation(programId, pVertexAttrib)}
 	,	m_colourAttribLocation{glGetAttribLocation(programId, pColourAttrib)}
-	,	m_numCircleSegments{std::max(numCircleSegments, uint16(3u))}
+	,	m_numCircleSegments{std::max(numCircleSegments, 3u)}
 	,	m_vertexCount{0}
 	,	m_polygonCount{0}
 {
