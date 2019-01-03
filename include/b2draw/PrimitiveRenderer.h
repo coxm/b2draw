@@ -68,7 +68,9 @@ public:
 	inline unsigned const numCircleSegments() const noexcept
 	{ return m_numCircleSegments; }
 
-	inline uint16 const vertexCount() const noexcept;
+	inline std::size_t vertexCount() const noexcept
+	{ return m_vertices.size(); }
+
 	inline uint16 const polygonCount() const noexcept;
 
 private:
@@ -88,14 +90,8 @@ private:
 	GLint m_colourAttribLocation;
 
 	unsigned m_numCircleSegments;
-	uint16 m_vertexCount;
 	uint16 m_polygonCount;
 };
-
-
-uint16 const
-PrimitiveRenderer::vertexCount() const noexcept
-{ return m_vertexCount; }
 
 
 uint16 const
