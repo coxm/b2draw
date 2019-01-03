@@ -23,7 +23,6 @@ PrimitiveRenderer::PrimitiveRenderer(
 	,	m_vertexAttribLocation{glGetAttribLocation(programId, pVertexAttrib)}
 	,	m_colourAttribLocation{glGetAttribLocation(programId, pColourAttrib)}
 	,	m_numCircleSegments{std::max(numCircleSegments, 3u)}
-	,	m_polygonCount{0}
 {
 	if (m_vertexAttribLocation < 0)
 	{
@@ -59,7 +58,6 @@ PrimitiveRenderer::PrimitiveRenderer(PrimitiveRenderer&& other) noexcept
 	,	m_vertexAttribLocation{other.m_vertexAttribLocation}
 	,	m_colourAttribLocation{other.m_colourAttribLocation}
 	,	m_numCircleSegments{other.m_numCircleSegments}
-	,	m_polygonCount{other.m_polygonCount}
 {
 	std::swap(m_vbo, other.m_vbo);
 	other.m_vao = 0;
@@ -67,7 +65,6 @@ PrimitiveRenderer::PrimitiveRenderer(PrimitiveRenderer&& other) noexcept
 	other.m_vertexAttribLocation = 0;
 	other.m_colourAttribLocation = 0;
 	other.m_numCircleSegments = 0;
-	other.m_polygonCount = 0;
 }
 
 
@@ -89,14 +86,13 @@ PrimitiveRenderer::addPolygon(
 	// Reserve the space before we do anything.
 	auto const totalVertices = m_vertices.size() + numNewVertices;
 	m_vertices.reserve(totalVertices);
-	auto const newPolygonCount = m_polygonCount + 1;
+	auto const newPolygonCount = m_polygonSizes.size() + 1;
 	m_firstIndices.reserve(newPolygonCount);
 	m_polygonSizes.reserve(newPolygonCount);
 
 	// Create a new polygon.
 	m_firstIndices.push_back(m_vertices.size());
 	m_polygonSizes.push_back(numNewVertices);
-	m_polygonCount = newPolygonCount;
 
 	// Copy vertices.
 	b2Vec2 const* const pEnd = pVertices + numNewVertices;
@@ -104,12 +100,6 @@ PrimitiveRenderer::addPolygon(
 	{
 		m_vertices.emplace_back(*pVertex, colour);
 	}
-
-	assert(
-		m_polygonCount == m_firstIndices.size() &&
-		m_polygonCount == m_polygonSizes.size() &&
-		"PrimitiveRenderer consistency error"
-	);
 }
 
 
@@ -148,8 +138,8 @@ PrimitiveRenderer::addSegment(
 	b2Color const& colour
 )
 {
-	decltype(m_polygonCount) const polygonCount = m_polygonCount + 1;
 	m_vertices.reserve(m_vertices.size() + 2);
+	auto const polygonCount = m_polygonSizes.size() + 1;
 	m_polygonSizes.reserve(polygonCount);
 	m_firstIndices.reserve(polygonCount);
 
@@ -157,13 +147,6 @@ PrimitiveRenderer::addSegment(
 	m_firstIndices.push_back(m_vertices.size());
 	m_vertices.emplace_back(begin, colour);
 	m_vertices.emplace_back(end, colour);
-
-	m_polygonCount = polygonCount;
-	assert(
-		m_polygonCount == m_polygonSizes.size() &&
-		m_polygonCount == m_firstIndices.size() &&
-		"PrimitiveRenderer internally inconsistent"
-	);
 }
 
 
@@ -204,7 +187,7 @@ PrimitiveRenderer::render(GLenum const mode)
 		mode,
 		m_firstIndices.data(),
 		m_polygonSizes.data(),
-		m_polygonCount
+		m_polygonSizes.size()
 	);
 
 	glBindVertexArray(0);
@@ -217,7 +200,6 @@ PrimitiveRenderer::clear()
 	m_vertices.clear();
 	m_firstIndices.clear();
 	m_polygonSizes.clear();
-	m_polygonCount = 0;
 }
 
 

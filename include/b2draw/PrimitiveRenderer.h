@@ -71,7 +71,8 @@ public:
 	inline std::size_t vertexCount() const noexcept
 	{ return m_vertices.size(); }
 
-	inline uint16 const polygonCount() const noexcept;
+	inline std::size_t polygonCount() const noexcept
+	{ return m_polygonSizes.size(); }
 
 private:
 	static constexpr unsigned char s_vertexBufferIndex = 0;
@@ -90,13 +91,7 @@ private:
 	GLint m_colourAttribLocation;
 
 	unsigned m_numCircleSegments;
-	uint16 m_polygonCount;
 };
-
-
-uint16 const
-PrimitiveRenderer::polygonCount() const noexcept
-{ return m_polygonCount; }
 
 
 } // namespace b2draw
