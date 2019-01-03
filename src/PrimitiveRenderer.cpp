@@ -1,7 +1,3 @@
-/**
- * @todo Currently the renderer stores a b2Color for each vertex, which results
- * in a lot of duplication. Is there a nice way to fix this?
- */
 #include <algorithm>
 #include <iterator>
 #include <stdexcept>
@@ -18,12 +14,11 @@ PrimitiveRenderer::PrimitiveRenderer(
 	char const* const pColourAttrib,
 	uint16 const numCircleSegments
 )
-	:	m_verts{}
+	:	m_vertices{}
 	,	m_firstIndices{}
 	,	m_polygonSizes{}
-	,	m_vertexColours{}
-	,	m_vbos{0, 0}
-	,	m_vao{0}
+	,	m_vbo{0u}
+	,	m_vao{0u}
 	,	m_program{programId}
 	,	m_vertexAttribLocation{glGetAttribLocation(programId, pVertexAttrib)}
 	,	m_colourAttribLocation{glGetAttribLocation(programId, pColourAttrib)}
@@ -41,36 +36,25 @@ PrimitiveRenderer::PrimitiveRenderer(
 		throw std::runtime_error{pColourAttrib};
 	}
 
-	glGenBuffers(2, m_vbos);
-	for (auto const vbo: m_vbos)
-	{
-		if (!vbo)
-		{
-			throw std::runtime_error{"Invalid VBO"};
-		}
+	glGenBuffers(1, &m_vbo);
+	if (m_vbo == 0u) {
+		throw std::runtime_error{"Invalid VBO"};
 	}
 
 	glGenVertexArrays(1, &m_vao);
 	if (!m_vao)
 	{
-		glDeleteBuffers(2, m_vbos);
+		glDeleteBuffers(1, &m_vbo);
 		throw std::runtime_error{"Invalid VAO"};
 	}
 }
 
 
 PrimitiveRenderer::PrimitiveRenderer(PrimitiveRenderer&& other) noexcept
-	:	m_verts{std::forward<decltype(m_verts)>(other.m_verts)}
-	,	m_firstIndices{
-			std::forward<decltype(m_firstIndices)>(other.m_firstIndices)
-		}
-	,	m_polygonSizes{
-			std::forward<decltype(m_polygonSizes)>(other.m_polygonSizes)
-		}
-	,	m_vertexColours{
-			std::forward<decltype(m_vertexColours)>(other.m_vertexColours)
-		}
-	,	m_vbos{}
+	:	m_vertices{std::move(other.m_vertices)}
+	,	m_firstIndices{std::move(other.m_firstIndices)}
+	,	m_polygonSizes{std::move(other.m_polygonSizes)}
+	,	m_vbo{0u}
 	,	m_vao{other.m_vao}
 	,	m_program{other.m_program}
 	,	m_vertexAttribLocation{other.m_vertexAttribLocation}
@@ -79,7 +63,7 @@ PrimitiveRenderer::PrimitiveRenderer(PrimitiveRenderer&& other) noexcept
 	,	m_vertexCount{other.m_vertexCount}
 	,	m_polygonCount{other.m_polygonCount}
 {
-	other.m_vbos[0] = other.m_vbos[1] = 0;
+	std::swap(m_vbo, other.m_vbo);
 	other.m_vao = 0;
 	other.m_program = 0;
 	other.m_vertexAttribLocation = 0;
@@ -92,7 +76,7 @@ PrimitiveRenderer::PrimitiveRenderer(PrimitiveRenderer&& other) noexcept
 
 PrimitiveRenderer::~PrimitiveRenderer() noexcept
 {
-	glDeleteBuffers(2, m_vbos);
+	glDeleteBuffers(1, &m_vbo);
 	glDeleteVertexArrays(1, &m_vao);
 }
 
@@ -107,23 +91,16 @@ PrimitiveRenderer::addPolygon(
 	assert(numNewVertices != 0 && "Can't render an empty polygon!");
 	// Reserve the space before we do anything.
 	auto const totalVertices = m_vertexCount + numNewVertices;
-	m_verts.reserve(totalVertices);
-	m_vertexColours.reserve(totalVertices);
+	m_vertices.reserve(totalVertices);
 	auto const newPolygonCount = m_polygonCount + 1;
 	m_firstIndices.reserve(newPolygonCount);
 	m_polygonSizes.reserve(newPolygonCount);
 
 	// Copy vertices.
-	std::copy(
-		pVertices,
-		pVertices + numNewVertices,
-		std::back_inserter(m_verts)
-	);
-
-	// This is pretty horrible. See note above.
-	for (int32 i = 0; i < numNewVertices; ++i)
+	b2Vec2 const* const pEnd = pVertices + numNewVertices;
+	for (b2Vec2 const* pVertex = pVertices; pVertex < pEnd; ++pVertex)
 	{
-		m_vertexColours.push_back(colour);
+		m_vertices.emplace_back(*pVertex, colour);
 	}
 
 	// Create a new polygon.
@@ -177,15 +154,12 @@ PrimitiveRenderer::addSegment(
 {
 	decltype(m_polygonCount) const polygonCount = m_polygonCount + 1;
 	decltype(m_vertexCount) const vertexCount = m_vertexCount + 2;
-	m_verts.reserve(vertexCount);
-	m_vertexColours.reserve(vertexCount);
+	m_vertices.reserve(vertexCount);
 	m_polygonSizes.reserve(polygonCount);
 	m_firstIndices.reserve(polygonCount);
 
-	m_verts.push_back(begin);
-	m_verts.push_back(end);
-	m_vertexColours.push_back(colour);
-	m_vertexColours.push_back(colour);
+	m_vertices.emplace_back(begin, colour);
+	m_vertices.emplace_back(end, colour);
 	m_polygonSizes.push_back(2);
 	m_firstIndices.push_back(m_vertexCount);
 
@@ -194,8 +168,7 @@ PrimitiveRenderer::addSegment(
 	assert(
 		m_polygonCount == m_polygonSizes.size() &&
 		m_polygonCount == m_firstIndices.size() &&
-		m_vertexCount == m_verts.size() &&
-		m_vertexCount == m_vertexColours.size() &&
+		m_vertexCount == m_vertices.size() &&
 		"PrimitiveRenderer internally inconsistent"
 	);
 }
@@ -204,29 +177,21 @@ PrimitiveRenderer::addSegment(
 void
 PrimitiveRenderer::bufferData()
 {
-	using vertex_type = decltype(m_verts)::value_type;
-	using colour_type = decltype(m_vertexColours)::value_type;
-
 	glBindVertexArray(m_vao);
 
 	// Vertices.
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbos[s_vertexBufferIndex]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 	glVertexAttribPointer(
-		m_vertexAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-	glBufferData(
-		GL_ARRAY_BUFFER,
-		m_vertexCount * sizeof(vertex_type),
-		m_verts.data(),
-		GL_DYNAMIC_DRAW
-	);
+		m_vertexAttribLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+		nullptr);
+	glVertexAttribPointer(
+		m_colourAttribLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+		reinterpret_cast<void const*>(offsetof(Vertex, second)));
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbos[s_colourBufferIndex]);
-	glVertexAttribPointer(
-		m_colourAttribLocation, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
 	glBufferData(
 		GL_ARRAY_BUFFER,
-		m_vertexCount * sizeof(colour_type),
-		m_vertexColours.data(),
+		m_vertexCount * sizeof(Vertex),
+		m_vertices.data(),
 		GL_DYNAMIC_DRAW
 	);
 
@@ -256,10 +221,9 @@ PrimitiveRenderer::render(GLenum const mode)
 void
 PrimitiveRenderer::clear()
 {
-	m_verts.clear();
+	m_vertices.clear();
 	m_firstIndices.clear();
 	m_polygonSizes.clear();
-	m_vertexColours.clear();
 	m_vertexCount = 0;
 	m_polygonCount = 0;
 }

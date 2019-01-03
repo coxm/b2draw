@@ -1,6 +1,7 @@
 #ifndef HEADER_INCLUDE__RECURSION__PHYSICS__B2__PRIMITIVERENDERER__H
 #define HEADER_INCLUDE__RECURSION__PHYSICS__B2__PRIMITIVERENDERER__H
 #include <vector>
+#include <utility>
 
 #include <GL/glew.h>
 
@@ -8,6 +9,9 @@
 
 
 namespace b2draw {
+
+
+using Vertex = std::pair<b2Vec2, b2Color>;
 
 
 class PrimitiveRenderer
@@ -69,12 +73,11 @@ private:
 	static constexpr unsigned char s_vertexBufferIndex = 0;
 	static constexpr unsigned char s_colourBufferIndex = 1;
 
-	std::vector<b2Vec2> m_verts;
+	std::vector<Vertex> m_vertices;
 	std::vector<GLint> m_firstIndices;
 	std::vector<GLsizei> m_polygonSizes;
-	std::vector<b2Color> m_vertexColours;
 
-	GLuint m_vbos[2];
+	GLuint m_vbo;
 	GLuint m_vao;
 
 	GLuint m_program;
