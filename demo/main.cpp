@@ -14,6 +14,7 @@
 #include <Box2D/Dynamics/b2Body.h>
 #include <Box2D/Dynamics/b2Fixture.h>
 #include <Box2D/Collision/Shapes/b2PolygonShape.h>
+#include <Box2D/Collision/Shapes/b2CircleShape.h>
 
 #include "b2draw/DebugDraw.h"
 
@@ -201,13 +202,26 @@ void run(int argc, char const* const argv[])
 	b2draw::DebugDraw debugDraw{
 		programID,
 		pPositionAttribName,
-		pColourAttribName
+		pColourAttribName,
+		16,
+		0.f
 	};
 	debugDraw.SetFlags(0xff);
 
 	b2Vec2 const gravity{0.0f, -9.8f};
 	b2World world{gravity};
 	world.SetDebugDraw(&debugDraw);
+
+	b2Filter collideEverything;
+	collideEverything.categoryBits = 0x0001;
+	collideEverything.maskBits = 0xffff;
+	collideEverything.groupIndex = 1;
+
+	b2FixtureDef fixtureDef;
+	fixtureDef.density = 1.0f;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.3f;
+	fixtureDef.filter = collideEverything;
 
 	{
 		b2BodyDef bodyDef;
@@ -217,7 +231,9 @@ void run(int argc, char const* const argv[])
 
 		b2PolygonShape box;
 		box.SetAsBox(-30.0f, 1.0f);
-		pGroundBody->CreateFixture(&box, 0.0f /* Density. */);
+
+		fixtureDef.shape = &box;
+		pGroundBody->CreateFixture(&fixtureDef);
 	}
 
 	{
@@ -229,11 +245,24 @@ void run(int argc, char const* const argv[])
 		b2PolygonShape box;
 		box.SetAsBox(1.0f, 1.0f);
 
-		b2FixtureDef fixtureDef;
 		fixtureDef.shape = &box;
-		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 0.3f;
 		pDynamicBody->CreateFixture(&fixtureDef);
+	}
+
+	{
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set(-7.0f, 8.0f);
+		bodyDef.linearVelocity.Set(1.0f, 0.0f);
+		bodyDef.angularVelocity = 1.5f;
+		auto const pBody = world.CreateBody(&bodyDef);
+
+		b2CircleShape circle;
+		circle.m_p = {0.0f, 0.0f};
+		circle.m_radius = 2.0f;
+
+		fixtureDef.shape = &circle;
+		pBody->CreateFixture(&fixtureDef);
 	}
 
 
@@ -263,6 +292,7 @@ void run(int argc, char const* const argv[])
 
 	auto const update = [&debugDraw, &world] {
 		world.Step(worldTimeStep, velocityIterations, positionIterations);
+		world.ClearForces();
 		debugDraw.Clear();
 		world.DrawDebugData();
 		debugDraw.BufferData();
