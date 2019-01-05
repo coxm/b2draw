@@ -43,22 +43,6 @@ PrimitiveRenderer::PrimitiveRenderer(
 }
 
 
-void
-PrimitiveRenderer::setPositionAttribLocation(GLint loc) noexcept
-{
-	glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
-}
-
-
-void
-PrimitiveRenderer::setColourAttribLocation(GLint loc) noexcept
-{
-	glVertexAttribPointer(
-		loc, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-		reinterpret_cast<void const*>(offsetof(Vertex, second)));
-}
-
-
 PrimitiveRenderer::PrimitiveRenderer(PrimitiveRenderer&& other) noexcept
 	:	m_vertices{std::move(other.m_vertices)}
 	,	m_firstIndices{std::move(other.m_firstIndices)}

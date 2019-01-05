@@ -4,6 +4,7 @@
 #include <utility>
 
 #include <GL/glew.h>
+#include <GL/gl.h>
 
 #include <Box2D/Common/b2Draw.h> // For b2Color.
 
@@ -82,10 +83,21 @@ public:
 	void setCircleSegments(unsigned count);
 
 	/** Set the position attribute location. */
-	void setPositionAttribLocation(GLint positionAttribLocation) noexcept;
+	inline void
+	setPositionAttribLocation(GLint location) noexcept
+	{
+		glVertexAttribPointer(
+			location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+	}
 
 	/** Set the colour attribute location. */
-	void setColourAttribLocation(GLint colourAttribLocation) noexcept;
+	inline void
+	setColourAttribLocation(GLint loation) noexcept
+	{
+		glVertexAttribPointer(
+			loation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+			reinterpret_cast<void const*>(offsetof(Vertex, second)));
+	}
 
 private:
 	std::vector<Vertex> m_vertices;

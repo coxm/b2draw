@@ -33,6 +33,15 @@ class DebugDraw
 	:	public b2Draw
 {
 public:
+	inline DebugDraw(
+		unsigned numCircleSegments = 16,
+		float32 fillAlpha = 0.5f,
+		float32 axisScale = 4.0f
+	)
+		:	DebugDraw(-1, -1, numCircleSegments, fillAlpha, axisScale)
+	{
+	}
+
 	DebugDraw(
 		GLint const positionAttribLocation,
 		GLint const colourAttribLocation,
@@ -93,6 +102,18 @@ public:
 	void Render();
 
 	void Clear();
+
+	inline void SetPositionAttribLocation(GLint location) noexcept
+	{
+		m_lineRenderer.setPositionAttribLocation(location);
+		m_fillRenderer.setPositionAttribLocation(location);
+	}
+
+	inline void SetColourAttribLocation(GLint location) noexcept
+	{
+		m_lineRenderer.setColourAttribLocation(location);
+		m_fillRenderer.setColourAttribLocation(location);
+	}
 
 private:
 	PrimitiveRenderer m_lineRenderer;
