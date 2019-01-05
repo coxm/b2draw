@@ -45,6 +45,18 @@ PrimitiveRenderer::PrimitiveRenderer(
 		glDeleteBuffers(1, &m_vbo);
 		throw std::runtime_error{"Invalid VAO"};
 	}
+
+	glBindVertexArray(m_vao);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glEnableVertexAttribArray(m_vertexAttribLocation);
+	glVertexAttribPointer(
+		m_vertexAttribLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+		nullptr);
+	glEnableVertexAttribArray(m_colourAttribLocation);
+	glVertexAttribPointer(
+		m_colourAttribLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+		reinterpret_cast<void const*>(offsetof(Vertex, second)));
+
 }
 
 
@@ -146,43 +158,26 @@ void
 PrimitiveRenderer::bufferData()
 {
 	glBindVertexArray(m_vao);
-
-	// Vertices.
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glVertexAttribPointer(
-		m_vertexAttribLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-		nullptr);
-	glVertexAttribPointer(
-		m_colourAttribLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-		reinterpret_cast<void const*>(offsetof(Vertex, second)));
-
 	glBufferData(
 		GL_ARRAY_BUFFER,
 		m_vertices.size() * sizeof(Vertex),
 		m_vertices.data(),
 		GL_DYNAMIC_DRAW
 	);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
 }
 
 
 void
 PrimitiveRenderer::render(GLenum const mode)
 {
-	glUseProgram(m_program);
 	glBindVertexArray(m_vao);
-	glEnableVertexAttribArray(m_vertexAttribLocation);
-	glEnableVertexAttribArray(m_colourAttribLocation);
 	glMultiDrawArrays(
 		mode,
 		m_firstIndices.data(),
 		m_polygonSizes.data(),
 		m_polygonSizes.size()
 	);
-
-	glBindVertexArray(0);
 }
 
 
