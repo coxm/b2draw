@@ -4,7 +4,8 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 
 set(PROJECT_NAME b2draw)
-project(${PROJECT_NAME} LANGUAGES CXX VERSION 3.0.0)
+set(PROJECT_VERSION 3.0.0)
+project(${PROJECT_NAME} LANGUAGES CXX VERSION ${PROJECT_VERSION})
 
 
 option(BUILD_DEMO OFF "Whether to build the demo application")
