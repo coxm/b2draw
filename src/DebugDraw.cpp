@@ -133,8 +133,8 @@ DebugDraw::BufferData()
 void
 DebugDraw::Render()
 {
-	m_lineRenderer.render(GL_LINE_LOOP);
 	m_fillRenderer.render(GL_TRIANGLE_FAN);
+	m_lineRenderer.render(GL_LINE_LOOP);
 }
 
 
