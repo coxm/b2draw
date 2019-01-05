@@ -68,20 +68,20 @@ sinToCos(float const angle, float const sinAngle)
  *
  * @code
  * std::vector<Vector2D> tmp;
- * vertices.reserve(numSegments);
- * chebyshevSegments(tmp, centreX, centreY, radius, angle, numSegments);
+ * vertices.reserve(numVertices);
+ * chebyshevSegments(tmp, centreX, centreY, radius, angle, numVertices);
  * std::swap(tmp, m_vertices);
  * @endcode
  */
-template <typename Container>
+template <typename Vertex>
 void
 chebyshevSegments(
-	Container& vertices,
+	Vertex* const pVertices,
+	unsigned const numVertices,
 	float const centreX,
 	float const centreY,
 	float const radius,
-	float const initialAngle,
-	unsigned const numSegments
+	float const initialAngle
 )
 {
 	// Constants we will use for the double angle formulae.
@@ -94,7 +94,7 @@ chebyshevSegments(
 	float sinIncrN_1 = 0.0f;
 
 	// The increment angle.
-	float const increment = 2.0f * M_PI / float(numSegments);
+	float const increment = 2.0f * M_PI / float(numVertices);
 
 	// cos(n * increment)
 	float cosIncrN = cosf(increment);
@@ -104,20 +104,20 @@ chebyshevSegments(
 	// The constant multiplier in Chebyshev's algorithm, 2cos(increment).
 	float const mult = 2 * cosIncrN;
 
-	vertices.emplace_back(
+	pVertices[0] = {
 		centreX - radius * sinInitial,
 		centreY + radius * cosInitial
-	);
-	vertices.emplace_back(
+	};
+	pVertices[1] = {
 		centreX - radius * (
 			sinIncrN * cosInitial + sinInitial * cosIncrN
 		),
 		centreY + radius * (
 			cosIncrN * cosInitial - sinIncrN * sinInitial
 		)
-	);
+	};
 
-	for (unsigned i = 2; i < numSegments; ++i)
+	for (unsigned i = 2; i < numVertices; ++i)
 	{
 		// Update the Chebyshev cos values.
 		float chebyOld = cosIncrN;
@@ -131,14 +131,14 @@ chebyshevSegments(
 
 		// Use double angle formulae to get cos(n * increment + initialAngle)
 		// and sin(n * increment + initialAngle).
-		vertices.emplace_back(
+		pVertices[i] = {
 			centreX - radius * (
 				sinIncrN * cosInitial + sinInitial * cosIncrN
 			),
 			centreY + radius * (
 				cosIncrN * cosInitial - sinIncrN * sinInitial
 			)
-		);
+		};
 	}
 }
 

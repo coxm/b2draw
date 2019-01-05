@@ -22,7 +22,7 @@ PrimitiveRenderer::PrimitiveRenderer(
 	,	m_program{programId}
 	,	m_vertexAttribLocation{glGetAttribLocation(programId, pVertexAttrib)}
 	,	m_colourAttribLocation{glGetAttribLocation(programId, pColourAttrib)}
-	,	m_numCircleSegments{std::max(numCircleSegments, 3u)}
+	,	m_tmpCircleBuffer{std::max(numCircleSegments, 3u)}
 {
 	if (m_vertexAttribLocation < 0)
 	{
@@ -57,14 +57,13 @@ PrimitiveRenderer::PrimitiveRenderer(PrimitiveRenderer&& other) noexcept
 	,	m_program{other.m_program}
 	,	m_vertexAttribLocation{other.m_vertexAttribLocation}
 	,	m_colourAttribLocation{other.m_colourAttribLocation}
-	,	m_numCircleSegments{other.m_numCircleSegments}
+	,	m_tmpCircleBuffer{std::move(other.m_tmpCircleBuffer)}
 {
 	std::swap(m_vbo, other.m_vbo);
 	other.m_vao = 0;
 	other.m_program = 0;
 	other.m_vertexAttribLocation = 0;
 	other.m_colourAttribLocation = 0;
-	other.m_numCircleSegments = 0;
 }
 
 
@@ -111,23 +110,16 @@ PrimitiveRenderer::addCircle(
 	float32 const initialAngle
 )
 {
-	std::vector<b2Vec2> vertices;
-	vertices.reserve(m_numCircleSegments);
 	algorithm::chebyshevSegments(
-		vertices,
+		m_tmpCircleBuffer.data(),
+		numCircleSegments(),
 		centre.x,
 		centre.y,
 		radius,
-		initialAngle,
-		m_numCircleSegments
+		initialAngle
 	);
 
-	assert(
-		vertices.size() == m_numCircleSegments &&
-		"Wrong number of circle segments"
-	);
-
-	addPolygon(vertices.data(), m_numCircleSegments, colour);
+	addPolygon(m_tmpCircleBuffer.data(), numCircleSegments(), colour);
 }
 
 

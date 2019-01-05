@@ -13,7 +13,7 @@ DebugDraw::DebugDraw(
 	GLuint const programId,
 	char const* const pVertexAttrib,
 	char const* const pColourAttrib,
-	uint16 const numCircleSegments,
+	unsigned const numCircleSegments,
 	float32 const fillAlpha,
 	float32 const axisScale
 )
@@ -55,7 +55,7 @@ DebugDraw::DrawSolidPolygon(
 	fillColour.a = m_fillAlpha;
 
 	m_fillRenderer.addPolygon(pVertices, vertexCount, fillColour);
-	m_lineRenderer.addPolygon(pVertices, vertexCount, fillColour);
+	m_lineRenderer.addPolygon(pVertices, vertexCount, colour);
 }
 
 void
@@ -79,22 +79,7 @@ DebugDraw::DrawSolidCircle(
 	b2Color fillColour{colour};
 	fillColour.a = m_fillAlpha;
 
-	// No point in repeating the segmentation.
-	std::vector<b2Vec2> segmentVertices;
-	auto const numSegments = m_lineRenderer.numCircleSegments();
-	segmentVertices.reserve(numSegments);
-	algorithm::chebyshevSegments(
-		segmentVertices,
-		centre.x,
-		centre.y,
-		radius,
-		std::atan2(axis.y, axis.x),
-		numSegments
-	);
-
-	m_fillRenderer.addPolygon(segmentVertices.data(), numSegments, fillColour);
-
-	m_lineRenderer.addPolygon(segmentVertices.data(), numSegments, colour);
+	m_fillRenderer.addCircle(centre, radius, fillColour);
 	m_lineRenderer.addSegment(
 		centre,
 		centre + radius * axis,

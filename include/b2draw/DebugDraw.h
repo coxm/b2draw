@@ -37,7 +37,7 @@ public:
 		GLuint const programId,
 		char const* const pVertexAttrib,
 		char const* const pColourAttrib,
-		uint16 const numCircleSegments = 16,
+		unsigned const numCircleSegments = 16,
 		float32 const fillAlpha = 0.5f,
 		float32 const axisScale = 4.0f
 	);

@@ -65,8 +65,8 @@ public:
 	 */
 	void clear();
 
-	inline unsigned const numCircleSegments() const noexcept
-	{ return m_numCircleSegments; }
+	inline std::size_t const numCircleSegments() const noexcept
+	{ return m_tmpCircleBuffer.size(); }
 
 	inline std::size_t vertexCount() const noexcept
 	{ return m_vertices.size(); }
@@ -81,6 +81,7 @@ private:
 	std::vector<Vertex> m_vertices;
 	std::vector<GLint> m_firstIndices;
 	std::vector<GLsizei> m_polygonSizes;
+	std::vector<b2Vec2> m_tmpCircleBuffer;
 
 	GLuint m_vbo;
 	GLuint m_vao;
@@ -89,8 +90,6 @@ private:
 
 	GLint m_vertexAttribLocation;
 	GLint m_colourAttribLocation;
-
-	unsigned m_numCircleSegments;
 };
 
 
