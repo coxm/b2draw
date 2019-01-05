@@ -9,9 +9,8 @@ namespace b2draw {
 
 
 PrimitiveRenderer::PrimitiveRenderer(
-	GLuint const programId,
-	char const* const pVertexAttrib,
-	char const* const pColourAttrib,
+	GLint const positionAttribLocation,
+	GLint const colourAttribLocation,
 	unsigned const numCircleSegments
 )
 	:	m_vertices{}
@@ -19,21 +18,8 @@ PrimitiveRenderer::PrimitiveRenderer(
 	,	m_polygonSizes{}
 	,	m_vbo{0u}
 	,	m_vao{0u}
-	,	m_program{programId}
-	,	m_vertexAttribLocation{glGetAttribLocation(programId, pVertexAttrib)}
-	,	m_colourAttribLocation{glGetAttribLocation(programId, pColourAttrib)}
 	,	m_tmpCircleBuffer{std::max(numCircleSegments, 3u)}
 {
-	if (m_vertexAttribLocation < 0)
-	{
-		throw std::runtime_error{pVertexAttrib};
-	}
-
-	if (m_colourAttribLocation < 0)
-	{
-		throw std::runtime_error{pColourAttrib};
-	}
-
 	glGenBuffers(1, &m_vbo);
 	if (m_vbo == 0u) {
 		throw std::runtime_error{"Invalid VBO"};
@@ -48,15 +34,28 @@ PrimitiveRenderer::PrimitiveRenderer(
 
 	glBindVertexArray(m_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glEnableVertexAttribArray(m_vertexAttribLocation);
-	glVertexAttribPointer(
-		m_vertexAttribLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-		nullptr);
-	glEnableVertexAttribArray(m_colourAttribLocation);
-	glVertexAttribPointer(
-		m_colourAttribLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-		reinterpret_cast<void const*>(offsetof(Vertex, second)));
 
+	glEnableVertexAttribArray(positionAttribLocation);
+	setPositionAttribLocation(positionAttribLocation);
+
+	glEnableVertexAttribArray(colourAttribLocation);
+	setColourAttribLocation(colourAttribLocation);
+}
+
+
+void
+PrimitiveRenderer::setPositionAttribLocation(GLint loc) noexcept
+{
+	glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+}
+
+
+void
+PrimitiveRenderer::setColourAttribLocation(GLint loc) noexcept
+{
+	glVertexAttribPointer(
+		loc, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+		reinterpret_cast<void const*>(offsetof(Vertex, second)));
 }
 
 
@@ -64,18 +63,12 @@ PrimitiveRenderer::PrimitiveRenderer(PrimitiveRenderer&& other) noexcept
 	:	m_vertices{std::move(other.m_vertices)}
 	,	m_firstIndices{std::move(other.m_firstIndices)}
 	,	m_polygonSizes{std::move(other.m_polygonSizes)}
-	,	m_vbo{0u}
+	,	m_vbo{other.m_vbo}
 	,	m_vao{other.m_vao}
-	,	m_program{other.m_program}
-	,	m_vertexAttribLocation{other.m_vertexAttribLocation}
-	,	m_colourAttribLocation{other.m_colourAttribLocation}
 	,	m_tmpCircleBuffer{std::move(other.m_tmpCircleBuffer)}
 {
-	std::swap(m_vbo, other.m_vbo);
+	other.m_vbo = 0;
 	other.m_vao = 0;
-	other.m_program = 0;
-	other.m_vertexAttribLocation = 0;
-	other.m_colourAttribLocation = 0;
 }
 
 

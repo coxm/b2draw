@@ -10,19 +10,14 @@ namespace b2draw {
 
 
 DebugDraw::DebugDraw(
-	GLuint const programId,
-	char const* const pVertexAttrib,
-	char const* const pColourAttrib,
+	GLint const positionAttribLoc,
+	GLint const colourAttribLoc,
 	unsigned const numCircleSegments,
 	float32 const fillAlpha,
 	float32 const axisScale
 )
-	:	m_lineRenderer{
-			programId, pVertexAttrib, pColourAttrib, numCircleSegments
-		}
-	,	m_fillRenderer{
-			programId, pVertexAttrib, pColourAttrib, numCircleSegments
-		}
+	:	m_lineRenderer{positionAttribLoc, colourAttribLoc, numCircleSegments}
+	,	m_fillRenderer{positionAttribLoc, colourAttribLoc, numCircleSegments}
 	,	m_fillAlpha{fillAlpha}
 	,	m_axisScale{axisScale}
 {
@@ -55,7 +50,6 @@ DebugDraw::DrawSolidPolygon(
 	fillColour.a = m_fillAlpha;
 
 	m_fillRenderer.addPolygon(pVertices, vertexCount, fillColour);
-	m_lineRenderer.addPolygon(pVertices, vertexCount, colour);
 }
 
 void

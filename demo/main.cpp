@@ -200,9 +200,8 @@ void run(int argc, char const* const argv[])
 	// Set up scene for rendering.
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	b2draw::DebugDraw debugDraw{
-		programID,
-		pPositionAttribName,
-		pColourAttribName,
+		glGetAttribLocation(programID, pPositionAttribName),
+		glGetAttribLocation(programID, pColourAttribName),
 		16,
 		0.f
 	};
@@ -296,7 +295,7 @@ void run(int argc, char const* const argv[])
 		debugDraw.Clear();
 		world.DrawDebugData();
 		debugDraw.BufferData();
-		// mvpMat = projMat * viewMat * modelMat;
+		// logBodies(&world);
 	};
 
 	auto const render = [

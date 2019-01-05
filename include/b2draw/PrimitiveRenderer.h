@@ -17,11 +17,15 @@ using Vertex = std::pair<b2Vec2, b2Color>;
 class PrimitiveRenderer
 {
 public:
+	inline PrimitiveRenderer(unsigned numCircleSegments = 16u)
+		:	PrimitiveRenderer(-1, -1, numCircleSegments)
+	{
+	}
+
 	PrimitiveRenderer(
-		GLuint const programId,
-		char const* const pVertexAttrib,
-		char const* const pColourAttrib,
-		unsigned const numCircleSegments = 16u
+		GLint vertexAttribLocation,
+		GLint colourAttribLocation,
+		unsigned numCircleSegments = 16u
 	);
 
 	// PrimitiveRenderer is non-copyable.
@@ -74,10 +78,16 @@ public:
 	inline std::size_t polygonCount() const noexcept
 	{ return m_polygonSizes.size(); }
 
-private:
-	static constexpr unsigned char s_vertexBufferIndex = 0;
-	static constexpr unsigned char s_colourBufferIndex = 1;
+	/** Set the number of circle segments. */
+	void setCircleSegments(unsigned count);
 
+	/** Set the position attribute location. */
+	void setPositionAttribLocation(GLint positionAttribLocation) noexcept;
+
+	/** Set the colour attribute location. */
+	void setColourAttribLocation(GLint colourAttribLocation) noexcept;
+
+private:
 	std::vector<Vertex> m_vertices;
 	std::vector<GLint> m_firstIndices;
 	std::vector<GLsizei> m_polygonSizes;
@@ -85,11 +95,6 @@ private:
 
 	GLuint m_vbo;
 	GLuint m_vao;
-
-	GLuint m_program;
-
-	GLint m_vertexAttribLocation;
-	GLint m_colourAttribLocation;
 };
 
 

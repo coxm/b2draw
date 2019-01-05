@@ -14,7 +14,7 @@ namespace b2draw {
  *
  * @code
  * // Configuration...
- * DebugDraw debugDraw;
+ * DebugDraw debugDraw(...);
  * b2World world;
  * world.SetDebugDraw(&debugDraw);
  * // ...
@@ -34,12 +34,11 @@ class DebugDraw
 {
 public:
 	DebugDraw(
-		GLuint const programId,
-		char const* const pVertexAttrib,
-		char const* const pColourAttrib,
-		unsigned const numCircleSegments = 16,
-		float32 const fillAlpha = 0.5f,
-		float32 const axisScale = 4.0f
+		GLint const positionAttribLocation,
+		GLint const colourAttribLocation,
+		unsigned numCircleSegments = 16,
+		float32 fillAlpha = 0.5f,
+		float32 axisScale = 4.0f
 	);
 
 	DebugDraw(DebugDraw const&) = delete;
