@@ -64,11 +64,12 @@ void logBodies(b2World const* pWorld)
 sdl_window_ptr initSDL()
 {
 	// Initialise SDL with video and events.
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0)
+	atexit(SDL_Quit); // SDL_Quit is safe to call even if SDL_Init failed.
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-		throw std::runtime_error{"SDL_Init failed"};
+		std::cerr << "SDL_Init failed!" << std::endl;
+		throw std::runtime_error{SDL_GetError()};
 	}
-	atexit(SDL_Quit);
 
 	// Initialise the window.
 	sdl_window_ptr pWindow{
@@ -83,7 +84,8 @@ sdl_window_ptr initSDL()
 	};
 	if (not pWindow)
 	{
-		throw std::runtime_error{"SDL_CreateWindow failed"};
+		std::cerr << "SDL_CreateWindow failed!" << std::endl;
+		throw std::runtime_error{SDL_GetError()};
 	}
 
 	return pWindow;
@@ -105,11 +107,12 @@ gl_context_ptr initGL(SDL_Window* pWindow)
 		SDL_GL_CONTEXT_PROFILE_CORE
 	);
 
-
 	// Initialise the OpenGL context.
 	gl_context_ptr pGLContext{SDL_GL_CreateContext(pWindow)};
-	if (not pGLContext)
+	if (!pGLContext)
 	{
+		std::cerr << "SDL_GL_CreateContext failed: " << SDL_GetError()
+			<< std::endl;
 		throw std::runtime_error{"SDL_GL_CreateContext failed"};
 	}
 
@@ -119,7 +122,7 @@ gl_context_ptr initGL(SDL_Window* pWindow)
 		GLenum glewError = glewInit();
 		if (glewError != GLEW_OK)
 		{
-			std::cout << "GLEW error: " << glewGetErrorString(glewError)
+			std::cerr << "GLEW error: " << glewGetErrorString(glewError)
 				<< std::endl;
 			throw std::runtime_error{"glewInit failed"};
 		}

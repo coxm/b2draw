@@ -10,11 +10,11 @@ namespace b2draw {
 
 
 DebugDraw::DebugDraw(
-	GLint const positionAttribLoc,
-	GLint const colourAttribLoc,
-	unsigned const numCircleSegments,
-	float32 const fillAlpha,
-	float32 const axisScale
+	GLint positionAttribLoc,
+	GLint colourAttribLoc,
+	unsigned numCircleSegments,
+	float32 fillAlpha,
+	float32 axisScale
 )
 	:	m_lineRenderer{positionAttribLoc, colourAttribLoc, numCircleSegments}
 	,	m_fillRenderer{positionAttribLoc, colourAttribLoc, numCircleSegments}
@@ -133,8 +133,8 @@ DebugDraw::BufferData()
 void
 DebugDraw::Render()
 {
-	m_fillRenderer.render(GL_TRIANGLE_FAN);
 	m_lineRenderer.render(GL_LINE_LOOP);
+	m_fillRenderer.render(GL_TRIANGLE_FAN);
 }
 
 

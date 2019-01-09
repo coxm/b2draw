@@ -20,6 +20,14 @@ PrimitiveRenderer::PrimitiveRenderer(
 	,	m_vao{0u}
 	,	m_tmpCircleBuffer{std::max(numCircleSegments, 3u)}
 {
+	// This is a debugging library, so if we encounter GL errors, we prefer to
+	// fail hard.
+	auto error = glGetError();
+	if (error != GL_NO_ERROR) {
+		throw std::runtime_error{
+			reinterpret_cast<char const*>(glewGetErrorString(error))};
+	}
+
 	glGenBuffers(1, &m_vbo);
 	if (m_vbo == 0u) {
 		throw std::runtime_error{"Invalid VBO"};
@@ -35,11 +43,25 @@ PrimitiveRenderer::PrimitiveRenderer(
 	glBindVertexArray(m_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
-	glEnableVertexAttribArray(positionAttribLocation);
-	setPositionAttribLocation(positionAttribLocation);
+	if (positionAttribLocation >= 0)
+	{
+		setPositionAttribLocation(positionAttribLocation);
+	}
+	error = glGetError();
+	if (error != GL_NO_ERROR) {
+		throw std::runtime_error{
+			reinterpret_cast<char const*>(glewGetErrorString(error))};
+	}
 
-	glEnableVertexAttribArray(colourAttribLocation);
-	setColourAttribLocation(colourAttribLocation);
+	if (colourAttribLocation >= 0)
+	{
+		setColourAttribLocation(colourAttribLocation);
+	}
+	error = glGetError();
+	if (error != GL_NO_ERROR) {
+		throw std::runtime_error{
+			reinterpret_cast<char const*>(glewGetErrorString(error))};
+	}
 }
 
 

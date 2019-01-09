@@ -86,16 +86,35 @@ public:
 	inline void
 	setPositionAttribLocation(GLint location) noexcept
 	{
+		glBindVertexArray(m_vao);
+		glEnableVertexAttribArray(location);
 		glVertexAttribPointer(
 			location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
 	}
 
 	/** Set the colour attribute location. */
 	inline void
-	setColourAttribLocation(GLint loation) noexcept
+	setColourAttribLocation(GLint location) noexcept
 	{
+		glBindVertexArray(m_vao);
+		glEnableVertexAttribArray(location);
 		glVertexAttribPointer(
-			loation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+			location, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+			reinterpret_cast<void const*>(offsetof(Vertex, second)));
+	}
+
+	inline void
+	setAttribLocations(GLint positionLocation, GLint colourLocation) noexcept
+	{
+		glBindVertexArray(m_vao);
+
+		glEnableVertexAttribArray(positionLocation);
+		glVertexAttribPointer(
+			positionLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+
+		glEnableVertexAttribArray(colourLocation);
+		glVertexAttribPointer(
+			colourLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
 			reinterpret_cast<void const*>(offsetof(Vertex, second)));
 	}
 

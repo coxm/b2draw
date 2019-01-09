@@ -35,7 +35,7 @@ class DebugDraw
 public:
 	inline DebugDraw(
 		unsigned numCircleSegments = 16,
-		float32 fillAlpha = 0.5f,
+		float32 fillAlpha = 0.9f,
 		float32 axisScale = 4.0f
 	)
 		:	DebugDraw(-1, -1, numCircleSegments, fillAlpha, axisScale)
@@ -43,8 +43,8 @@ public:
 	}
 
 	DebugDraw(
-		GLint const positionAttribLocation,
-		GLint const colourAttribLocation,
+		GLint positionAttribLocation,
+		GLint colourAttribLocation,
 		unsigned numCircleSegments = 16,
 		float32 fillAlpha = 0.5f,
 		float32 axisScale = 4.0f
@@ -113,6 +113,12 @@ public:
 	{
 		m_lineRenderer.setColourAttribLocation(location);
 		m_fillRenderer.setColourAttribLocation(location);
+	}
+
+	inline void SetAttribLocations(GLint position, GLint colour) noexcept
+	{
+		m_lineRenderer.setAttribLocations(position, colour);
+		m_fillRenderer.setAttribLocations(position, colour);
 	}
 
 private:

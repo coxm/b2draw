@@ -1,4 +1,4 @@
-if(BUILD_DEMO)
+if(NOT NO_DEMO)
 	message(STATUS "Building demo...")
 
 	find_library(LIB_SDL SDL2)
