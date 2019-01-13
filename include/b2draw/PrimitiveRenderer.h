@@ -18,6 +18,13 @@ using Vertex = std::pair<b2Vec2, b2Color>;
 class PrimitiveRenderer
 {
 public:
+	/**
+	 * Create an uninitialised PrimitiveRenderer.
+	 *
+	 * If using this constructor, make sure to call @ref
+	 * setPositionAttribLocation and @ref setColourAttribLocation before
+	 * attempting to render.
+	 */
 	inline PrimitiveRenderer(unsigned numCircleSegments = 16u)
 		:	PrimitiveRenderer(-1, -1, numCircleSegments)
 	{
@@ -87,6 +94,7 @@ public:
 	setPositionAttribLocation(GLint location) noexcept
 	{
 		glBindVertexArray(m_vao);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 		glEnableVertexAttribArray(location);
 		glVertexAttribPointer(
 			location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
@@ -97,6 +105,7 @@ public:
 	setColourAttribLocation(GLint location) noexcept
 	{
 		glBindVertexArray(m_vao);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 		glEnableVertexAttribArray(location);
 		glVertexAttribPointer(
 			location, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
@@ -107,6 +116,7 @@ public:
 	setAttribLocations(GLint positionLocation, GLint colourLocation) noexcept
 	{
 		glBindVertexArray(m_vao);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
 		glEnableVertexAttribArray(positionLocation);
 		glVertexAttribPointer(
