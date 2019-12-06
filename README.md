@@ -47,6 +47,7 @@ Create a debug draw:
 
     // Configuration...
     DebugDraw debugDraw(...);
+    debugDraw.SetFlags(0xff); // Draw everything.
     b2World world;
     world.SetDebugDraw(&debugDraw);
 
