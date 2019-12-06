@@ -201,12 +201,14 @@ void run(int argc, char const* const argv[])
 	auto programID{createProgram()};
 
 	// Set up scene for rendering.
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.3f, 0.3f, 0.3f, 1.f);
+
 	b2draw::DebugDraw debugDraw{
 		glGetAttribLocation(programID, pPositionAttribName),
 		glGetAttribLocation(programID, pColourAttribName),
 		16,
-		0.f
+		0.01f,
+		4.f
 	};
 	debugDraw.SetFlags(0xff);
 

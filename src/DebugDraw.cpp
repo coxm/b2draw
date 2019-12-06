@@ -24,9 +24,7 @@ DebugDraw::DebugDraw(
 }
 
 
-DebugDraw::~DebugDraw() noexcept
-{
-}
+DebugDraw::~DebugDraw() noexcept = default;
 
 
 void

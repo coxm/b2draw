@@ -35,7 +35,7 @@ class DebugDraw
 public:
 	inline DebugDraw(
 		unsigned numCircleSegments = 16,
-		float32 fillAlpha = 0.9f,
+		float32 fillAlpha = 0.5f,
 		float32 axisScale = 4.0f
 	)
 		:	DebugDraw(-1, -1, numCircleSegments, fillAlpha, axisScale)
