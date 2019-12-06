@@ -1,23 +1,9 @@
 if(NOT NO_DEMO)
-	message(STATUS "Building demo...")
+	find_package(SDL2 REQUIRED)
 
-	find_library(LIB_SDL SDL2)
-	if(LIB_SDL)
-		file(
-			GLOB
-			DEMO_CPP_SOURCES
-			"${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
-			"${CMAKE_CURRENT_SOURCE_DIR}/util/*.cpp"
-		)
-		set(
-			DEMO_LIBRARIES
-			${DEPENDENCY_LIBRARIES}
-			${PROJECT_NAME}
-			${LIB_SDL}
-		)
-		add_executable(demo ${DEMO_CPP_SOURCES})
-		target_link_libraries(demo ${DEMO_LIBRARIES})
-	else()
-		message(STATUS "Unable to find libSDL2. Not building demo.")
-	endif()
+	add_executable(b2draw-demo
+		"${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/util/gl.cpp")
+	target_link_libraries(b2draw-demo PUBLIC
+		b2draw::b2draw Box2D::Box2D ${SDL2_LIBRARIES})
 endif()
