@@ -1,0 +1,6 @@
+include(GNUInstallDirs)
+install(TARGETS b2draw
+    EXPORT b2draw-export
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)

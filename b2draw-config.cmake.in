@@ -1,0 +1,4 @@
+if(NOT TARGET b2draw::b2draw)
+  get_filename_component(b2draw_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+  include("${b2draw_CMAKE_DIR}/b2draw-targets.cmake")
+endif()

@@ -1,54 +1,61 @@
-cmake_minimum_required(VERSION 3.1)
-set(CMAKE_DISABLE_SOURCE_CHANGES ON)
-set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+cmake_minimum_required(VERSION 3.7)
+project(b2draw VERSION 4.0.0 LANGUAGES CXX)
+
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
+
+option(b2draw_BUILD_DEMO "Build the demo application" OFF)
 
 
-set(PROJECT_NAME b2draw)
-set(PROJECT_VERSION 4.0.0)
-project(${PROJECT_NAME} LANGUAGES CXX VERSION ${PROJECT_VERSION})
-
-
-option(BUILD_DEMO OFF "Whether to build the demo application")
-
-
-# Compiler flags.
-list(APPEND CXX_FLAGS_BASE
-	-Werror -std=c++1z -Wall -Wold-style-cast -Woverloaded-virtual
-	-Wno-int-conversions -Wsign-promo -Wno-pmf-conversions
-)
-if(${CMAKE_COMPILER_IS_GNUCXX})
-	list(APPEND CXX_FLAGS_BASE -Weffc++)
-endif()
-if(CMAKE_BUILD_TYPE EQUAL "Debug")
-	list(APPEND CXX_FLAGS_BASE -O0 -ggdb3)
-endif()
-
-
-file(GLOB CPP_SOURCES "${CMAKE_SOURCE_DIR}/src/*.cpp")
-
-include_directories("${CMAKE_SOURCE_DIR}/include")
-
-
-# Dependencies.
-if(BOX2D_INCLUDE_DIRS)
-  include_directories(SYSTEM ${BOX2D_INCLUDE_DIRS})
-endif()
-if(GLM_INCLUDE_DIRS)
-	include_directories(SYSTEM ${GLM_INCLUDE_DIRS})
-endif()
-find_library(LIB_BOX2D Box2D PATHS "${BOX2D_LIB_DIR}")
+find_package(Box2D 2.3.1 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW 2.0 EXACT REQUIRED)
-set(DEPENDENCY_LIBRARIES ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${LIB_BOX2D})
 
 
-# Targets
-add_library(${PROJECT_NAME} SHARED ${CPP_SOURCES})
-set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION})
-target_link_libraries(${PROJECT_NAME} ${DEPENDENCY_LIBRARIES})
-install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib)
+add_library(b2draw "src/DebugDraw.cpp" "src/PrimitiveRenderer.cpp")
+add_library(b2draw::b2draw ALIAS b2draw)
+set_target_properties(b2draw PROPERTIES
+	VERSION ${PROJECT_VERSION}
+	SOVERSION ${PROJECT_VERSION}
+	PROJECT_LABEL "b2draw"
+	DEBUG_POSTFIX d)
+target_include_directories(b2draw PUBLIC
+	$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(b2draw PUBLIC
+	Box2D::Box2D ${Box2D_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+target_compile_options(b2draw PRIVATE
+	$<$<CXX_COMPILER_ID:GNU>:-Wall -Weffc++ -Werror -Wshadow -Wold-style-cast -Woverloaded-virtual>)
 
 
-if(NOT NO_DEMO)
+configure_package_config_file(
+	"${PROJECT_SOURCE_DIR}/b2draw-config.cmake.in"
+	"${PROJECT_BINARY_DIR}/b2draw-config.cmake"
+	INSTALL_DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/b2draw")
+write_basic_package_version_file(
+	"${PROJECT_BINARY_DIR}/b2draw-config-version.cmake"
+	COMPATIBILITY AnyNewerVersion)
+configure_file(b2draw.pc.in b2draw.pc @ONLY)
+
+
+install(TARGETS b2draw
+	EXPORT b2draw-targets
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+	FILES_MATCHING PATTERN "*.h")
+install(EXPORT b2draw-targets
+	DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/b2draw")
+install(FILES
+	"${PROJECT_BINARY_DIR}/b2draw-config.cmake"
+	"${PROJECT_BINARY_DIR}/b2draw-config-version.cmake"
+	DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/b2draw")
+install(FILES "${PROJECT_BINARY_DIR}/b2draw.pc"
+	DESTINATION ${CMAKE_INSTALL_DATADIR}/pkgconfig)
+
+
+if(b2draw_BUILD_DEMO)
 	add_subdirectory(demo)
 endif()
