@@ -86,6 +86,9 @@ public:
 	inline std::size_t polygonCount() const noexcept
 	{ return m_polygonSizes.size(); }
 
+	inline bool empty() const noexcept
+	{ return m_firstIndices.empty(); }
+
 	/** Set the number of circle segments. */
 	void setCircleSegments(unsigned count);
 

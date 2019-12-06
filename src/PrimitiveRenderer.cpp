@@ -1,3 +1,4 @@
+#include <cassert>
 #include <algorithm>
 #include <iterator>
 #include <stdexcept>
@@ -123,14 +124,14 @@ PrimitiveRenderer::addCircle(
 {
 	algorithm::chebyshevSegments(
 		m_tmpCircleBuffer.data(),
-		numCircleSegments(),
+		m_tmpCircleBuffer.size(),
 		centre.x,
 		centre.y,
 		radius,
 		initialAngle
 	);
 
-	addPolygon(m_tmpCircleBuffer.data(), numCircleSegments(), colour);
+	addPolygon(m_tmpCircleBuffer.data(), m_tmpCircleBuffer.size(), colour);
 }
 
 
@@ -170,6 +171,9 @@ PrimitiveRenderer::bufferData()
 void
 PrimitiveRenderer::render(GLenum const mode)
 {
+	if (empty()) {
+		return;
+	}
 	glBindVertexArray(m_vao);
 	glMultiDrawArrays(
 		mode,
