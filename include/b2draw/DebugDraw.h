@@ -33,6 +33,8 @@ class DebugDraw
 	:	public b2Draw
 {
 public:
+	static constexpr uint32 s_drawAll = 0xff;
+
 	inline DebugDraw(
 		unsigned numCircleSegments = 16,
 		float32 fillAlpha = 0.5f,
