@@ -16,9 +16,9 @@ PrimitiveRenderer::PrimitiveRenderer(
 	:	m_vertices{}
 	,	m_firstIndices{}
 	,	m_polygonSizes{}
+	,	m_tmpCircleBuffer{std::max(numCircleSegments, 3u)}
 	,	m_vbo{0u}
 	,	m_vao{0u}
-	,	m_tmpCircleBuffer{std::max(numCircleSegments, 3u)}
 {
 	// This is a debugging library, so if we encounter GL errors, we prefer to
 	// fail hard.
@@ -69,9 +69,9 @@ PrimitiveRenderer::PrimitiveRenderer(PrimitiveRenderer&& other) noexcept
 	:	m_vertices{std::move(other.m_vertices)}
 	,	m_firstIndices{std::move(other.m_firstIndices)}
 	,	m_polygonSizes{std::move(other.m_polygonSizes)}
+	,	m_tmpCircleBuffer{std::move(other.m_tmpCircleBuffer)}
 	,	m_vbo{other.m_vbo}
 	,	m_vao{other.m_vao}
-	,	m_tmpCircleBuffer{std::move(other.m_tmpCircleBuffer)}
 {
 	other.m_vbo = 0;
 	other.m_vao = 0;
