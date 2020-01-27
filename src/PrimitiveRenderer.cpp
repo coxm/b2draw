@@ -163,7 +163,7 @@ PrimitiveRenderer::bufferData()
 		GL_ARRAY_BUFFER,
 		m_vertices.size() * sizeof(Vertex),
 		m_vertices.data(),
-		GL_STREAM_DRAW
+		GL_DYNAMIC_DRAW
 	);
 }
 
