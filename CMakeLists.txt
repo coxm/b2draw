@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.7)
+cmake_policy(SET CMP0072 NEW)
 project(b2draw VERSION 4.0.0 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
